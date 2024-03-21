@@ -1,76 +1,72 @@
 package project_package;
 
-import java.awt.HeadlessException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
-import java.sql.Statement;
-import javax.swing.JOptionPane;
 import java.sql.ResultSet;
 import javax.swing.table.DefaultTableModel;
 import java.sql.ResultSetMetaData;
+import javax.swing.JOptionPane;
+import java.sql.PreparedStatement;
+import javax.swing.event.ListSelectionEvent;
 
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
- */
-/**
- *
- * @author Richard Ngabo
- */
 public class adminPage extends javax.swing.JFrame {
 
     public adminPage() {
         initComponents();
         populateAdminViewTable();
+
+        // Add ListSelectionListener to the table
+        adminViewTable.getSelectionModel().addListSelectionListener((ListSelectionEvent e) -> {
+            if (!e.getValueIsAdjusting()) {
+                // Get the selected row
+                int selectedRow = adminViewTable.getSelectedRow();
+
+                if (selectedRow != -1) {
+                    // Get data from the selected row
+                    Object id = adminViewTable.getValueAt(selectedRow, 0);
+                    Object name = adminViewTable.getValueAt(selectedRow, 1);
+                    
+                    dispose();
+                    new detailsPage((int) id, (String) name).setVisible(true);
+                }
+            }
+        });
+
     }
 
     // Method to populate adminViewTable with data from the database
     private void populateAdminViewTable() {
-        try {
-            // Establish connection to the database
-            Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/employees", "root", "");
-
-            // Prepare SQL query to retrieve data from employee_details table
+        try (Connection connection = getConnection()) {
             String query = "SELECT * FROM employee_details";
-            Statement statement = connection.prepareStatement(query);
+            try (PreparedStatement statement = connection.prepareStatement(query); ResultSet resultSet = statement.executeQuery()) {
 
-            // Execute the query
-            ResultSet resultSet = statement.executeQuery(query);
+                DefaultTableModel model = (DefaultTableModel) adminViewTable.getModel();
+                model.setRowCount(0);
 
-            // Create a DefaultTableModel to hold the data for JTable
-            DefaultTableModel model = (DefaultTableModel) adminViewTable.getModel();
-
-            // Clear existing rows from the table
-            model.setRowCount(0);
-
-            // Get metadata about the ResultSet (number of columns)
-            ResultSetMetaData metaData = resultSet.getMetaData();
-            int columnCount = metaData.getColumnCount();
-
-            // Create an array to hold column names
-            String[] columnNames = new String[columnCount];
-            for (int i = 0; i < columnCount; i++) {
-                // Get the column name from metadata
-                columnNames[i] = metaData.getColumnName(i + 1); // Columns are 1-indexed
-            }
-
-            // Set column names of the table model
-            model.setColumnIdentifiers(columnNames);
-
-            // Iterate through the result set and add rows to the table model
-            while (resultSet.next()) {
-                Object[] row = new Object[columnCount];
+                ResultSetMetaData metaData = resultSet.getMetaData();
+                int columnCount = metaData.getColumnCount();
+                String[] columnNames = new String[columnCount];
                 for (int i = 0; i < columnCount; i++) {
-                    row[i] = resultSet.getObject(i + 1); // Columns are 1-indexed
+                    columnNames[i] = metaData.getColumnName(i + 1);
                 }
-                model.addRow(row);
+                model.setColumnIdentifiers(columnNames);
+
+                while (resultSet.next()) {
+                    Object[] row = new Object[columnCount];
+                    for (int i = 0; i < columnCount; i++) {
+                        row[i] = resultSet.getObject(i + 1);
+                    }
+                    model.addRow(row);
+                }
             }
         } catch (SQLException ex) {
-            ex.printStackTrace();
-        } finally {
-
+            JOptionPane.showMessageDialog(this, "Error retrieving data from database: " + ex.getMessage());
         }
+    }
+
+    private Connection getConnection() throws SQLException {
+        return DriverManager.getConnection("jdbc:mysql://localhost:3306/employees", "root", "");
     }
 
     /**
@@ -87,18 +83,23 @@ public class adminPage extends javax.swing.JFrame {
         jScrollPane1 = new javax.swing.JScrollPane();
         adminViewTable = new javax.swing.JTable();
         logoutAdmin = new javax.swing.JButton();
-        detailsPage = new javax.swing.JButton();
+        jPanel1 = new javax.swing.JPanel();
+        jPanel2 = new javax.swing.JPanel();
+        jPanel3 = new javax.swing.JPanel();
+        jPanel4 = new javax.swing.JPanel();
+        jPanel5 = new javax.swing.JPanel();
+        jPanel6 = new javax.swing.JPanel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         getContentPane().setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         employeeTitle.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
-        employeeTitle.setText("Employees");
-        getContentPane().add(employeeTitle, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 20, -1, -1));
+        employeeTitle.setText("Employees List:");
+        getContentPane().add(employeeTitle, new org.netbeans.lib.awtextra.AbsoluteConstraints(310, 20, -1, -1));
 
         adminName.setFont(new java.awt.Font("Segoe UI", 3, 18)); // NOI18N
         adminName.setText("Admin");
-        getContentPane().add(adminName, new org.netbeans.lib.awtextra.AbsoluteConstraints(774, 15, -1, -1));
+        getContentPane().add(adminName, new org.netbeans.lib.awtextra.AbsoluteConstraints(620, 20, -1, -1));
 
         adminViewTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -107,23 +108,48 @@ public class adminPage extends javax.swing.JFrame {
             new String [] {
                 "Title 1", "Title 2", "Title 3", "Title 4", "Title 5"
             }
-        ));
+        ) {
+            boolean[] canEdit = new boolean [] {
+                false, false, false, false, false
+            };
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
         jScrollPane1.setViewportView(adminViewTable);
 
         getContentPane().add(jScrollPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(84, 65, 651, -1));
 
         logoutAdmin.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         logoutAdmin.setText("Logout");
-        getContentPane().add(logoutAdmin, new org.netbeans.lib.awtextra.AbsoluteConstraints(610, 543, 125, 47));
+        logoutAdmin.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                logoutAdminActionPerformed(evt);
+            }
+        });
+        getContentPane().add(logoutAdmin, new org.netbeans.lib.awtextra.AbsoluteConstraints(320, 530, 125, 47));
 
-        detailsPage.setBackground(new java.awt.Color(0, 0, 204));
-        detailsPage.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
-        detailsPage.setForeground(new java.awt.Color(255, 255, 255));
-        detailsPage.setText("Details Page");
-        getContentPane().add(detailsPage, new org.netbeans.lib.awtextra.AbsoluteConstraints(396, 543, 131, 47));
+        jPanel1.add(jPanel2);
+
+        getContentPane().add(jPanel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 20, 60, 600));
+
+        jPanel3.add(jPanel4);
+
+        getContentPane().add(jPanel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(750, 40, 80, 580));
+
+        jPanel5.add(jPanel6);
+
+        getContentPane().add(jPanel5, new org.netbeans.lib.awtextra.AbsoluteConstraints(80, 580, 750, 30));
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    private void logoutAdminActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_logoutAdminActionPerformed
+
+        dispose();
+        new loginPage().setVisible(true);
+    }//GEN-LAST:event_logoutAdminActionPerformed
 
     /**
      * @param args the command line arguments
@@ -163,8 +189,13 @@ public class adminPage extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel adminName;
     private javax.swing.JTable adminViewTable;
-    private javax.swing.JButton detailsPage;
     private javax.swing.JLabel employeeTitle;
+    private javax.swing.JPanel jPanel1;
+    private javax.swing.JPanel jPanel2;
+    private javax.swing.JPanel jPanel3;
+    private javax.swing.JPanel jPanel4;
+    private javax.swing.JPanel jPanel5;
+    private javax.swing.JPanel jPanel6;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JButton logoutAdmin;
     // End of variables declaration//GEN-END:variables

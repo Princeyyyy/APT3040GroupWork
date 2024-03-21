@@ -1,26 +1,14 @@
 package project_package;
 
-import java.awt.HeadlessException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
-import java.sql.Statement;
 import javax.swing.JOptionPane;
 import java.sql.ResultSet;
+import java.sql.PreparedStatement;
 
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
- */
-/**
- *
- * @author Richard Ngabo
- */
 public class loginPage extends javax.swing.JFrame {
-
-    /**
-     * Creates new form loginPage
-     */
+    
     public loginPage() {
         initComponents();
     }
@@ -42,6 +30,8 @@ public class loginPage extends javax.swing.JFrame {
         userPassword = new javax.swing.JPasswordField();
         loginBtn = new javax.swing.JButton();
         exitBtn = new javax.swing.JButton();
+        jPanel1 = new javax.swing.JPanel();
+        jPanel2 = new javax.swing.JPanel();
 
         jLabel1.setText("jLabel1");
 
@@ -81,44 +71,53 @@ public class loginPage extends javax.swing.JFrame {
             }
         });
         getContentPane().add(exitBtn, new org.netbeans.lib.awtextra.AbsoluteConstraints(376, 316, 95, -1));
+        getContentPane().add(jPanel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(490, 60, 90, 360));
+        getContentPane().add(jPanel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 60, 60, 360));
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
     private void exitBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exitBtnActionPerformed
         // TODO add your handling code here:
+        dispose();
     }//GEN-LAST:event_exitBtnActionPerformed
 
     private void loginBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_loginBtnActionPerformed
-        // TODO add your handling code here:
-        String username = userName.getText();
-        String password = userPassword.getText();
+        String username = userName.getText().trim();
+        String password = userPassword.getText().trim();
 
-        if (username.isBlank() || password.isBlank()) {
-            JOptionPane.showMessageDialog(this, "Kindly fill in all fields first");
-        } else {
-            try {
-                Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/employees", "root", "");
+        if (username.isEmpty() || password.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Please fill in both username and password fields.");
+            return;
+        }
 
-                Statement statement = con.createStatement();
+        try (Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/employees", "root", "")) {
+            String query = "SELECT * FROM employee_details WHERE employee_username = ? AND employee_password = ?";
 
-                String sql = "select * from employee_details where employee_username='" + username + "' and employee_password='" + password + "'";
+            try (PreparedStatement statement = con.prepareStatement(query)) {
+                statement.setString(1, username);
+                statement.setString(2, password);
 
-                ResultSet rs = statement.executeQuery(sql);
-
-                if (rs.next()) {
-                    dispose();
-
-                    userPage user = new userPage();
-                    user.show();
-                } else {
-                    JOptionPane.showMessageDialog(this, "Username or Password is incoorrect. Try again");
-                    userName.setText("");
-                    userPassword.setText("");
+                try (ResultSet rs = statement.executeQuery()) {
+                    if (rs.next()) {
+                        int userId = rs.getInt("employee_id");
+                        if (username.equals("admin") && password.equals("admin123")) {
+                            dispose();
+                            new adminPage().setVisible(true);
+                        } else {
+                            dispose();
+                            new userPage(userId).setVisible(true);
+                        }
+                    } else {
+                        JOptionPane.showMessageDialog(this, "Incorrect username or password. Please try again.");
+                        userName.setText("");
+                        userPassword.setText("");
+                    }
                 }
-            } catch (SQLException | HeadlessException se) {
-                JOptionPane.showMessageDialog(null, se.getMessage());
             }
+        } catch (SQLException ex) {
+            JOptionPane.showMessageDialog(this, "An error occurred while attempting to log in: " + ex.getMessage());
+            // Log the exception for debugging
         }
     }//GEN-LAST:event_loginBtnActionPerformed
 
@@ -160,6 +159,8 @@ public class loginPage extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton exitBtn;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JPanel jPanel1;
+    private javax.swing.JPanel jPanel2;
     private javax.swing.JButton loginBtn;
     private javax.swing.JLabel loginLabel;
     private javax.swing.JLabel loginPassword;
