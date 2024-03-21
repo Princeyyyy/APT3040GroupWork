@@ -28,7 +28,7 @@ public class userPage extends javax.swing.JFrame {
     public userPage(int userId) {
         initComponents();
 
-        this.userId = userId; // Set user ID
+        userPage.userId = userId; // Set user ID
 
         populateUserTable();
 
@@ -428,7 +428,7 @@ public class userPage extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void logoutButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_logoutButtonActionPerformed
-        // TODO add your handling code here:
+
         dispose();
         new loginPage().setVisible(true);
     }//GEN-LAST:event_logoutButtonActionPerformed
@@ -476,7 +476,6 @@ public class userPage extends javax.swing.JFrame {
     }//GEN-LAST:event_addTimeActionPerformed
 
     private void removeTimeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_removeTimeActionPerformed
-        // TODO add your handling code here:
         // Check if an employee is selected
         if (selectedEmployeeId != 0) {
             // Perform deletion operation
@@ -488,7 +487,6 @@ public class userPage extends javax.swing.JFrame {
 
     private void calculateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_calculateActionPerformed
         try {
-            // TODO add your handling code here:
             // Retrieve off time entries from the database
             List<OffTimeEntry> offTimeEntries = getOffTimeEntriesFromDatabase();
 
@@ -497,16 +495,13 @@ public class userPage extends javax.swing.JFrame {
 
             // Calculate total payment
             double totalPayment = calculateTotalPayment(hourlyRate, offTimeEntries);
-            
+
             JOptionPane.showMessageDialog(this, "Based on your logged time off, your total payment is: $" + totalPayment);
         } catch (SQLException ex) {
             Logger.getLogger(userPage.class.getName()).log(Level.SEVERE, null, ex);
         }
     }//GEN-LAST:event_calculateActionPerformed
 
-    /**
-     * @param args the command line arguments
-     */
     public static void main(String args[]) {
         /* Set the Nimbus look and feel */
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
@@ -532,10 +527,8 @@ public class userPage extends javax.swing.JFrame {
         //</editor-fold>
 
         /* Create and display the form */
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                new userPage(1).setVisible(true);
-            }
+        java.awt.EventQueue.invokeLater(() -> {
+            new userPage(1).setVisible(true);
         });
     }
 

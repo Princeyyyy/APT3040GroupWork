@@ -21,13 +21,13 @@ import javax.swing.table.DefaultTableModel;
 public class detailsPage extends javax.swing.JFrame {
 
     private static int userId;
-    private String name;
+    private static String name;
 
     public detailsPage(int userId, String name) {
         initComponents();
 
-        this.userId = userId;
-        this.name = name;
+        detailsPage.userId = userId;
+        detailsPage.name = name;
 
         populateUserTable();
     }

@@ -10,7 +10,6 @@ package project_package;
  */
 public class Main {
     public static void main(String[] args) {
-        loginPage login = new loginPage();
-        login.show();
+        new loginPage().setVisible(true);
     }
 }
