@@ -6,9 +6,10 @@ import java.sql.SQLException;
 import javax.swing.JOptionPane;
 import java.sql.ResultSet;
 import java.sql.PreparedStatement;
+import java.sql.Statement;
 
 public class loginPage extends javax.swing.JFrame {
-    
+
     public loginPage() {
         initComponents();
     }
@@ -91,27 +92,46 @@ public class loginPage extends javax.swing.JFrame {
             return;
         }
 
-        try (Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/employees", "root", "")) {
-            String query = "SELECT * FROM employee_details WHERE employee_username = ? AND employee_password = ?";
+        try (Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/employees_time_off_registry", "root", "")) {
+            String query = "SELECT * FROM employee_details WHERE employee_username = ?";
 
             try (PreparedStatement statement = con.prepareStatement(query)) {
                 statement.setString(1, username);
-                statement.setString(2, password);
 
                 try (ResultSet rs = statement.executeQuery()) {
                     if (rs.next()) {
-                        int userId = rs.getInt("employee_id");
-                        if (username.equals("admin") && password.equals("admin123")) {
-                            dispose();
-                            new adminPage().setVisible(true);
+                        String storedPassword = rs.getString("employee_password");
+                        int userId = rs.getInt("id"); // Correct column name to retrieve user ID
+                        if (password.equals(storedPassword)) {
+                            if (username.equals("admin") && password.equals("admin123")) {
+                                dispose();
+                                new adminPage().setVisible(true); // Correct class name for admin page
+                            } else {
+                                dispose();
+                                new userPage(userId).setVisible(true); // Passing user ID to userPage constructor
+                            }
                         } else {
-                            dispose();
-                            new userPage(userId).setVisible(true);
+                            JOptionPane.showMessageDialog(this, "Incorrect password. Please try again.");
+                            userPassword.setText("");
                         }
                     } else {
-                        JOptionPane.showMessageDialog(this, "Incorrect username or password. Please try again.");
-                        userName.setText("");
-                        userPassword.setText("");
+                        // User does not exist, save the credentials and then log in
+                        String insertQuery = "INSERT INTO employee_details (employee_username, employee_password) VALUES (?, ?)";
+
+                        try (PreparedStatement insertStatement = con.prepareStatement(insertQuery, Statement.RETURN_GENERATED_KEYS)) {
+                            insertStatement.setString(1, username);
+                            insertStatement.setString(2, password);
+                            insertStatement.executeUpdate();
+
+                            // Retrieving the generated user ID
+                            try (ResultSet generatedKeys = insertStatement.getGeneratedKeys()) {
+                                if (generatedKeys.next()) {
+                                    int userId = generatedKeys.getInt(1);
+                                    dispose();
+                                    new userPage(userId).setVisible(true); // Log in the user after saving their credentials
+                                }
+                            }
+                        }
                     }
                 }
             }
@@ -119,6 +139,8 @@ public class loginPage extends javax.swing.JFrame {
             JOptionPane.showMessageDialog(this, "An error occurred while attempting to log in: " + ex.getMessage());
             // Log the exception for debugging
         }
+
+
     }//GEN-LAST:event_loginBtnActionPerformed
 
     /**

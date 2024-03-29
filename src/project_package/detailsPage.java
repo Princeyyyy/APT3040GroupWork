@@ -68,7 +68,7 @@ public class detailsPage extends javax.swing.JFrame {
     }
 
     private Connection getConnection() throws SQLException {
-        return DriverManager.getConnection("jdbc:mysql://localhost:3306/employees", "root", "");
+        return DriverManager.getConnection("jdbc:mysql://localhost:3306/employees_time_off_registry", "root", "");
     }
 
     // Method to calculate payment for a single off time entry
@@ -104,7 +104,7 @@ public class detailsPage extends javax.swing.JFrame {
     // Method to retrieve off time entries from database
     public static List<OffTimeEntry> getOffTimeEntriesFromDatabase() throws SQLException {
         List<OffTimeEntry> offTimeEntries = new ArrayList<>();
-        try (Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/employees", "root", "")) {
+        try (Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/employees_time_off_registry", "root", "")) {
             String query = "SELECT start_time, end_time FROM employee_off_time WHERE employee_id = ?";
             try (PreparedStatement statement = connection.prepareStatement(query)) {
                 // Set the employee id parameter (replace 123 with actual employee id)

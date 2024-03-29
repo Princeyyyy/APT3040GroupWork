@@ -66,7 +66,7 @@ public class adminPage extends javax.swing.JFrame {
     }
 
     private Connection getConnection() throws SQLException {
-        return DriverManager.getConnection("jdbc:mysql://localhost:3306/employees", "root", "");
+        return DriverManager.getConnection("jdbc:mysql://localhost:3306/employees_time_off_registry", "root", "");
     }
 
     /**
