@@ -306,17 +306,17 @@ public class userPage extends javax.swing.JFrame {
         logoutButton = new javax.swing.JButton();
         calculate = new javax.swing.JButton();
         jLabel1 = new javax.swing.JLabel();
-        endDate = new com.toedter.calendar.JDateChooser();
         endHr = new javax.swing.JSpinner();
         endMin = new javax.swing.JSpinner();
         jLabel3 = new javax.swing.JLabel();
         jLabel4 = new javax.swing.JLabel();
         jLabel5 = new javax.swing.JLabel();
-        startDate = new com.toedter.calendar.JDateChooser();
         startHr = new javax.swing.JSpinner();
         startMin = new javax.swing.JSpinner();
         jPanel1 = new javax.swing.JPanel();
         jPanel2 = new javax.swing.JPanel();
+        jTextField1 = new javax.swing.JTextField();
+        jTextField2 = new javax.swing.JTextField();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         getContentPane().setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
@@ -393,14 +393,13 @@ public class userPage extends javax.swing.JFrame {
 
         jLabel1.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
         jLabel1.setText("Pick time you were off:");
-        getContentPane().add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(670, 90, 210, 30));
-        getContentPane().add(endDate, new org.netbeans.lib.awtextra.AbsoluteConstraints(720, 260, 180, 30));
+        getContentPane().add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(670, 60, 210, 30));
 
         endHr.setPreferredSize(new java.awt.Dimension(64, 64));
         getContentPane().add(endHr, new org.netbeans.lib.awtextra.AbsoluteConstraints(930, 260, -1, 30));
 
         endMin.setPreferredSize(new java.awt.Dimension(64, 64));
-        getContentPane().add(endMin, new org.netbeans.lib.awtextra.AbsoluteConstraints(1030, 260, -1, 30));
+        getContentPane().add(endMin, new org.netbeans.lib.awtextra.AbsoluteConstraints(1040, 260, -1, 30));
 
         jLabel3.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         jLabel3.setForeground(new java.awt.Color(255, 51, 51));
@@ -414,15 +413,28 @@ public class userPage extends javax.swing.JFrame {
         jLabel5.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         jLabel5.setText("Start Date and Time:");
         getContentPane().add(jLabel5, new org.netbeans.lib.awtextra.AbsoluteConstraints(560, 150, -1, -1));
-        getContentPane().add(startDate, new org.netbeans.lib.awtextra.AbsoluteConstraints(720, 140, 180, 30));
 
         startHr.setPreferredSize(new java.awt.Dimension(64, 64));
         getContentPane().add(startHr, new org.netbeans.lib.awtextra.AbsoluteConstraints(930, 140, 70, 30));
 
         startMin.setPreferredSize(new java.awt.Dimension(64, 64));
-        getContentPane().add(startMin, new org.netbeans.lib.awtextra.AbsoluteConstraints(1030, 140, -1, 30));
+        getContentPane().add(startMin, new org.netbeans.lib.awtextra.AbsoluteConstraints(1040, 140, -1, 30));
         getContentPane().add(jPanel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(80, 570, 770, 50));
         getContentPane().add(jPanel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(1120, 70, 100, 570));
+
+        jTextField1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jTextField1ActionPerformed(evt);
+            }
+        });
+        getContentPane().add(jTextField1, new org.netbeans.lib.awtextra.AbsoluteConstraints(720, 250, 180, 50));
+
+        jTextField2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jTextField2ActionPerformed(evt);
+            }
+        });
+        getContentPane().add(jTextField2, new org.netbeans.lib.awtextra.AbsoluteConstraints(720, 130, 180, 50));
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
@@ -434,45 +446,45 @@ public class userPage extends javax.swing.JFrame {
     }//GEN-LAST:event_logoutButtonActionPerformed
 
     private void addTimeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addTimeActionPerformed
-        try {
-
-            if (startDate.getDate() == null || startDate.getDate() == null) {
-                JOptionPane.showMessageDialog(this, "Please select valid date and time values");
-            } else {
-                // Get the selected start and end dates
-                String start = startDate.getDate().toString();
-                String end = endDate.getDate().toString();
-
-                SimpleDateFormat inputFormat = new SimpleDateFormat("EEE MMM dd HH:mm:ss zzz yyyy");
-                Date startDate = inputFormat.parse(start);
-                Date endDate = inputFormat.parse(end);
-
-                SimpleDateFormat outputFormat = new SimpleDateFormat("EEE, MMM dd yyyy");
-                String formattedStartDate = outputFormat.format(startDate);
-                String formattedEndDate = outputFormat.format(endDate);
-
-                // Get the selected start and end hours and minutes
-                int startHour = (int) startHr.getValue();
-                int startMinute = (int) startMin.getValue();
-                int endHour = (int) endHr.getValue();
-                int endMinute = (int) endMin.getValue();
-
-                // Validate form inputs
-                if (start.isEmpty() || end.isEmpty() || startHour < 0 || startHour > 23 || startMinute < 0 || startMinute > 59
-                        || endHour < 0 || endHour > 23 || endMinute < 0 || endMinute > 59) {
-                    JOptionPane.showMessageDialog(this, "Please select valid date and time values");
-                } else {
-                    // Insert data into the database or show confirmation popup
-                    showAddPopup(userId, formattedStartDate + " " + startHour + ":" + startMinute,
-                            formattedEndDate + " " + endHour + ":" + endMinute);
-                }
-            }
-
-        } catch (HeadlessException ex) {
-            JOptionPane.showMessageDialog(this, "Error processing date and time values: " + ex.getMessage());
-        } catch (ParseException ex) {
-            Logger.getLogger(userPage.class.getName()).log(Level.SEVERE, null, ex);
-        }
+//        try {
+//
+//            if (startDate.getDate() == null || startDate.getDate() == null) {
+//                JOptionPane.showMessageDialog(this, "Please select valid date and time values");
+//            } else {
+//                // Get the selected start and end dates
+//                String start = startDate.getDate().toString();
+//                String end = endDate.getDate().toString();
+//
+//                SimpleDateFormat inputFormat = new SimpleDateFormat("EEE MMM dd HH:mm:ss zzz yyyy");
+//                Date startDate = inputFormat.parse(start);
+//                Date endDate = inputFormat.parse(end);
+//
+//                SimpleDateFormat outputFormat = new SimpleDateFormat("EEE, MMM dd yyyy");
+//                String formattedStartDate = outputFormat.format(startDate);
+//                String formattedEndDate = outputFormat.format(endDate);
+//
+//                // Get the selected start and end hours and minutes
+//                int startHour = (int) startHr.getValue();
+//                int startMinute = (int) startMin.getValue();
+//                int endHour = (int) endHr.getValue();
+//                int endMinute = (int) endMin.getValue();
+//
+//                // Validate form inputs
+//                if (start.isEmpty() || end.isEmpty() || startHour < 0 || startHour > 23 || startMinute < 0 || startMinute > 59
+//                        || endHour < 0 || endHour > 23 || endMinute < 0 || endMinute > 59) {
+//                    JOptionPane.showMessageDialog(this, "Please select valid date and time values");
+//                } else {
+//                    // Insert data into the database or show confirmation popup
+//                    showAddPopup(userId, formattedStartDate + " " + startHour + ":" + startMinute,
+//                            formattedEndDate + " " + endHour + ":" + endMinute);
+//                }
+//            }
+//
+//        } catch (HeadlessException ex) {
+//            JOptionPane.showMessageDialog(this, "Error processing date and time values: " + ex.getMessage());
+//        } catch (ParseException ex) {
+//            Logger.getLogger(userPage.class.getName()).log(Level.SEVERE, null, ex);
+//        }
     }//GEN-LAST:event_addTimeActionPerformed
 
     private void removeTimeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_removeTimeActionPerformed
@@ -501,6 +513,14 @@ public class userPage extends javax.swing.JFrame {
             Logger.getLogger(userPage.class.getName()).log(Level.SEVERE, null, ex);
         }
     }//GEN-LAST:event_calculateActionPerformed
+
+    private void jTextField1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField1ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jTextField1ActionPerformed
+
+    private void jTextField2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField2ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jTextField2ActionPerformed
 
     public static void main(String args[]) {
         /* Set the Nimbus look and feel */
@@ -535,7 +555,6 @@ public class userPage extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton addTime;
     private javax.swing.JButton calculate;
-    private com.toedter.calendar.JDateChooser endDate;
     private javax.swing.JSpinner endHr;
     private javax.swing.JSpinner endMin;
     private javax.swing.JLabel jLabel1;
@@ -545,9 +564,10 @@ public class userPage extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JTextField jTextField1;
+    private javax.swing.JTextField jTextField2;
     private javax.swing.JButton logoutButton;
     private javax.swing.JButton removeTime;
-    private com.toedter.calendar.JDateChooser startDate;
     private javax.swing.JSpinner startHr;
     private javax.swing.JSpinner startMin;
     private javax.swing.JLabel timeOff;
