@@ -33,6 +33,10 @@ public class loginPage extends javax.swing.JFrame {
         exitBtn = new javax.swing.JButton();
         jPanel1 = new javax.swing.JPanel();
         jPanel2 = new javax.swing.JPanel();
+        loginUserName1 = new javax.swing.JLabel();
+        jPanel3 = new javax.swing.JPanel();
+        loginUserName3 = new javax.swing.JLabel();
+        loginUserName2 = new javax.swing.JLabel();
 
         jLabel1.setText("jLabel1");
 
@@ -44,8 +48,8 @@ public class loginPage extends javax.swing.JFrame {
         getContentPane().add(loginLabel, new org.netbeans.lib.awtextra.AbsoluteConstraints(201, 38, 216, -1));
 
         loginUserName.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
-        loginUserName.setText("                 Username");
-        getContentPane().add(loginUserName, new org.netbeans.lib.awtextra.AbsoluteConstraints(42, 157, 160, 30));
+        loginUserName.setText("one will be created with the details you provide");
+        getContentPane().add(loginUserName, new org.netbeans.lib.awtextra.AbsoluteConstraints(140, 390, 340, 30));
 
         loginPassword.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         loginPassword.setText("Password");
@@ -74,6 +78,19 @@ public class loginPage extends javax.swing.JFrame {
         getContentPane().add(exitBtn, new org.netbeans.lib.awtextra.AbsoluteConstraints(376, 316, 95, -1));
         getContentPane().add(jPanel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(490, 60, 90, 360));
         getContentPane().add(jPanel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 60, 60, 360));
+
+        loginUserName1.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        loginUserName1.setText("                 Username");
+        getContentPane().add(loginUserName1, new org.netbeans.lib.awtextra.AbsoluteConstraints(42, 157, 160, 30));
+        getContentPane().add(jPanel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 450, 580, 40));
+
+        loginUserName3.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        loginUserName3.setText("If you do not have an account");
+        getContentPane().add(loginUserName3, new org.netbeans.lib.awtextra.AbsoluteConstraints(180, 360, 210, 30));
+
+        loginUserName2.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        loginUserName2.setText("Click Login as usual");
+        getContentPane().add(loginUserName2, new org.netbeans.lib.awtextra.AbsoluteConstraints(230, 420, -1, -1));
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
@@ -181,10 +198,14 @@ public class loginPage extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel1;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
+    private javax.swing.JPanel jPanel3;
     private javax.swing.JButton loginBtn;
     private javax.swing.JLabel loginLabel;
     private javax.swing.JLabel loginPassword;
     private javax.swing.JLabel loginUserName;
+    private javax.swing.JLabel loginUserName1;
+    private javax.swing.JLabel loginUserName2;
+    private javax.swing.JLabel loginUserName3;
     private javax.swing.JTextField userName;
     private javax.swing.JPasswordField userPassword;
     // End of variables declaration//GEN-END:variables
